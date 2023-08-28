@@ -1,0 +1,11 @@
+firewalls:
+  children:
+    srx:
+      hosts:
+        srx01-lab:
+      vars:
+        ansible_connection: netconf 
+        ansible_ssh_user: admin
+        ansible_ssh_pass: iamgroot!
+        ansible_network_os: junipernetworks.junos.junos
+        python_interpreter: /usr/bin/python3

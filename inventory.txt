@@ -1,0 +1,1 @@
+srx ansible_host=192.168.31.210 ansible_connection=network_cli ansible_ssh_user=admin ansible_ssh_pass=iamgroot! python_interpreter=/usr/bin/python3 ansible_network_os=junipernetworks.junos.junos

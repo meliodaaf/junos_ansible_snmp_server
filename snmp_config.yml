@@ -1,0 +1,32 @@
+---
+- name: Configure System
+  hosts: srx
+  gather_facts: false
+  tasks:
+    - name: Configure Hostname
+      junipernetworks.junos.junos_hostname:
+        config:
+          hostname: "srx01-lab"
+        state: merged
+
+
+- name: SNMP Configuration
+  hosts: srx
+  gather_facts: false
+
+  tasks:
+    - name: Load SNMP Credentials from vault
+      include_vars: snmp_creds.yml
+      
+    - name: Configure SNMP Credentials
+      junipernetworks.junos.junos_config:
+        lines:
+          - "set snmp v3 usm local-engine user AUTHPRIV authentication-md5 authentication-password {{ auth_key }}"
+          - "set snmp v3 usm local-engine user AUTHPRIV privacy-des privacy-password {{ priv_key }}"
+        comment: update config
+
+    - name: Test SNMP
+      debug:
+        msg: "snmpwalk -v 3 -l authPriv -u AUTHPRIV -a md5 -A {{ auth_key }} -x des -X {{ priv_key }} 192.168.31.210"
+
+
