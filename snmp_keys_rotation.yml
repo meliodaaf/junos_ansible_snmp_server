@@ -1,0 +1,28 @@
+---
+- name: Rotate SNMP Passwords
+  gather_facts: false
+  hosts: all
+  connection: network_cli
+ 
+  tasks:
+    - name: write in string variables new password
+      delegate_to: localhost
+      no_log: True
+      set_fact:
+        new_authkey: MYAUTHENTICATIONKEYS
+        new_privkey: MYPRIVKEYS
+
+    - name: write in string variables hidden password for display purposes
+      delegate_to: localhost
+      set_fact:
+        authkey_hidden_password: "{{ new_authkey[0]+'*'*(new_authkey|length-1) }}"
+        privkey_hidden_password: "{{ new_privkey[0]+'*'*(new_privkey|length-1) }}"
+
+    - name: Change Junos SNMP keys
+      no_log: True
+      junos_config:
+      lines:
+        - set snmp v3 usm local-engine user CMDB authentication-sha authentication-password {{ new_authkey }}
+        - set snmp v3 usm local-engine user CMDB privacy-aes128 privacy-password {{ new_privkey }}
+      when: ansible_network_os in ['junos']
+
